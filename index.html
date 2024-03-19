@@ -208,12 +208,52 @@
       };
 
       const Loading = () => (
-        <div style={{ textAlign: 'center', marginTop: '50px' }}>
+        <div
+          style={{
+            textAlign: 'center',
+            marginTop: '50px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <img
             src="./page_resources/octaviaLoading.gif"
             alt="Loading..."
             style={{ height: '1000px', width: '1000px' }}
           />
+          <div
+            className="text-container"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '20px',
+              padding: '20px',
+              border: '1px solid #ddd',
+              borderRadius: '5px',
+              backgroundColor: '#ffffff',
+              opacity: 0.8,
+              width: '966px',
+              height: '200px',
+            }}
+          >
+            <p
+              className="empty-state-message"
+              style={{
+                fontSize: '40px',
+                color: '#000000',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              Loading...
+            </p>
+          </div>
         </div>
       );
 
