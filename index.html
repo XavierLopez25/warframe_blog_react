@@ -17,11 +17,11 @@
     <div id="root"></div>
     <script type="text/babel">
       const Header = () => {
-        const [isMobile, setIsMobile] = React.useState(window.innerWidth < 768);
+        const [isMobile, setIsMobile] = React.useState(window.innerWidth < 1314);
 
         React.useEffect(() => {
           const handleResize = () => {
-            setIsMobile(window.innerWidth < 768);
+            setIsMobile(window.innerWidth < 1314);
           };
 
           window.addEventListener('resize', handleResize);
