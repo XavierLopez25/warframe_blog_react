@@ -257,7 +257,7 @@
         </div>
       );
 
-      const BlogContent = React.lazy(() => import('./BlogContent')); // Assuming BlogContent.js contains the Blog component logic
+      const BlogContent = React.lazy(() => import('./BlogContent'));
 
       class Blog extends React.Component {
         constructor(props) {
@@ -268,6 +268,9 @@
             images: [
               'https://i.pinimg.com/736x/d3/84/e3/d384e309b5deb7b2dd417b07df8419bc.jpg',
               'https://i.ytimg.com/vi/siYUE9lyP78/maxresdefault.jpg',
+              'https://i.ytimg.com/vi/Sz2U1xVWerA/maxresdefault.jpg',
+              'https://i.ytimg.com/vi/FLkJ6_f2JU8/maxresdefault.jpg',
+              'https://i.ytimg.com/vi/tTW1oXOQ9CU/sddefault.jpg',
             ],
           };
         }
@@ -296,6 +299,7 @@
           document.body.style.backgroundSize = 'fit';
           document.body.style.backgroundRepeat = 'no-repeat';
           document.body.style.backgroundPosition = 'center';
+          document.body.style.height = '100%';
           this.fetchPosts();
           this.interval = setInterval(this.fetchPosts, 5000);
         }
@@ -375,7 +379,7 @@
                         )}
                       </div>
                     ) : (
-                      <div>
+                      <div style={{ maxHeight: 'calc(100vh - 100px)', overflowY: 'auto' }}>
                         {posts.map((post, index) => (
                           <BlogPost key={index} {...post} imageUrl={images[index]} />
                         ))}
