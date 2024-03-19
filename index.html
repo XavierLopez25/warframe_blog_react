@@ -16,6 +16,79 @@
   <body>
     <div id="root"></div>
     <script>
+      const Header = () => {
+        const [isMobile, setIsMobile] = React.useState(window.innerWidth < 768);
+
+        React.useEffect(() => {
+          const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+          };
+
+          window.addEventListener('resize', handleResize);
+
+          return () => window.removeEventListener('resize', handleResize);
+        }, []);
+
+        const playSound = (soundFileName) => {
+          const audio = new Audio(soundFileName);
+          audio.volume = 0.25;
+          audio.play().catch((error) => console.log('Error playing the sound:', error));
+        };
+
+        return (
+          <div className="header" style={headerStyles}>
+            <h1>Warframe React Blog</h1>
+            <p>
+              Welcome to this community Blog. Here you'll find a collection of content related to
+              Warframe.
+            </p>
+            <div
+              className="container"
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: isMobile ? 'column' : 'row',
+                width: '100%',
+                opacity: 0.8,
+              }}
+            >
+              <Button
+                label="CLEM GRAKATA"
+                onClick={() => playSound('./page_resources/ClemGrakata.mp3')}
+                imageUrl="./page_resources/ClemGrakata.gif"
+                style={buttonStyle}
+                imageStyle={imageStyle}
+              />
+              <Button
+                label="I'M VERY EXITED NOW!"
+                onClick={() => playSound('./page_resources/IMVERYEXITEDNOW.mp3')}
+                imageUrl="./page_resources/TylRegor.png"
+                style={buttonStyle}
+                imageStyle={imageStyle}
+              />
+              <Button
+                label="IT'S HAMMER TIME!"
+                onClick={() => playSound('./page_resources/ITSHAMMERTIME.mp3')}
+                imageUrl="./page_resources/TylRegorBONK.gif"
+                style={buttonStyle}
+                imageStyle={imageStyle}
+              />
+            </div>
+          </div>
+        );
+      };
+
+      const Footer = () => {
+        return (
+          <div style={footerStyles}>
+            <p>
+              Warframe React Blog © {new Date().getFullYear()} by Xavier López. All rights reserved.
+            </p>
+          </div>
+        );
+      };
+
       const footerStyles = {
         backgroundColor: '#7c9496',
         color: '#ffffff',
@@ -72,6 +145,213 @@
 
       const postContentStyles = {
         fontSize: '22px',
+      };
+
+      const Button = (props) => {
+        return (
+          <button onClick={props.onClick} style={buttonStyle}>
+            {props.imageUrl && <img src={props.imageUrl} alt="" style={imageStyle} />}
+            {props.label}
+          </button>
+        );
+      };
+
+      Button.propTypes = {
+        label: PropTypes.string.isRequired,
+        onClick: PropTypes.func.isRequired,
+        imageUrl: PropTypes.string,
+        style: PropTypes.object,
+        imageStyle: PropTypes.object,
+      };
+
+      class BlogPost extends React.Component {
+        render() {
+          const { id, title, content, warframe, build, formas_required, imageUrl, updated_at } =
+            this.props;
+
+          return (
+            <div className="post" style={postStyles}>
+              {imageUrl && (
+                <img src={imageUrl} alt={title} style={{ maxWidth: '25%', height: 'auto' }} />
+              )}{' '}
+              <h2 className="post-title" style={postTitleStyles}>
+                {title}
+              </h2>
+              <p className="post-content" style={postContentStyles}>
+                {content}
+              </p>
+              <p className="post-warframe" style={postContentStyles}>
+                Warframe: {warframe}
+              </p>
+              <p className="post-build" style={postContentStyles}>
+                Build: {build}
+              </p>
+              <p className="post-formas" style={postContentStyles}>
+                Formas Required: {formas_required}
+              </p>
+              <p className="post-formas" style={postContentStyles}>
+                Updated At: {updated_at}
+              </p>
+            </div>
+          );
+        }
+      }
+
+      BlogPost.propTypes = {
+        title: PropTypes.string.isRequired,
+        content: PropTypes.string.isRequired,
+        warframe: PropTypes.string,
+        build: PropTypes.string,
+        formasRequired: PropTypes.number,
+        imageUrl: PropTypes.string,
+        updated_at: PropTypes.string,
+      };
+
+      const Loading = () => (
+        <div style={{ textAlign: 'center', marginTop: '50px' }}>
+          <img
+            src="./page_resources/octaviaLoading.gif"
+            alt="Loading..."
+            style={{ height: '1000px', width: '1000px' }}
+          />
+        </div>
+      );
+
+      const BlogContent = React.lazy(() => import('./BlogContent')); // Assuming BlogContent.js contains the Blog component logic
+
+      class Blog extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            posts: [],
+            loading: true,
+            images: [
+              'https://i.pinimg.com/736x/d3/84/e3/d384e309b5deb7b2dd417b07df8419bc.jpg',
+              'https://i.ytimg.com/vi/siYUE9lyP78/maxresdefault.jpg',
+            ],
+          };
+        }
+
+        fetchPosts = async () => {
+          try {
+            const response = await fetch('https://api.tiburoncin.lat/22716/posts');
+            if (!response.ok) throw new Error('Network response was not okay :(');
+
+            const data = await response.json();
+            const filteredPosts = data.map(({ imageBase64, ...rest }) => rest);
+            if (filteredPosts.length === 0)
+              this.setState({ posts: filteredPosts, loading: false, error: 'No posts found.' });
+            else this.setState({ posts: filteredPosts, loading: false });
+          } catch (error) {
+            setError('Failed to fetch posts. Please try again later.');
+            console.error('Failed to fetch posts:', error);
+            this.setState({ loading: false });
+          }
+        };
+
+        componentDidMount() {
+          document.body.style.margin = '20px';
+          document.body.style.fontFamily = 'Arial, sans-serif';
+          document.body.style.backgroundImage = `url('./page_resources/bg.png')`;
+          document.body.style.backgroundSize = 'fit';
+          document.body.style.backgroundRepeat = 'no-repeat';
+          document.body.style.backgroundPosition = 'center';
+          this.fetchPosts();
+          this.interval = setInterval(this.fetchPosts, 5000);
+        }
+
+        componentWillUnmount() {
+          document.body.style.margin = '';
+          document.body.style.fontFamily = '';
+          document.body.style.backgroundImage = '';
+          clearInterval(this.interval);
+        }
+
+        render() {
+          const { posts, images, loading, error } = this.state;
+
+          return (
+            <React.Suspense fallback={<Loading />}>
+              <div>
+                <Header />
+                {loading ? (
+                  <Loading />
+                ) : (
+                  <div>
+                    {posts.length === 0 ? (
+                      <div
+                        className="empty-state"
+                        style={{
+                          textAlign: 'center',
+                          marginTop: '50px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        {error === 'No posts found.' ? (
+                          <div className="empty-state-container">
+                            <img
+                              src="./page_resources/NoPosts.gif"
+                              alt="No posts available"
+                              className="empty-state-image"
+                              style={{ height: '560px', width: '986px' }}
+                            />
+                            <div
+                              className="text-container"
+                              style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginBottom: '20px',
+                                padding: '20px',
+                                border: '1px solid #ddd',
+                                borderRadius: '5px',
+                                backgroundColor: '#ffffff',
+                                opacity: 0.8,
+                                width: '966px',
+                                height: '200px',
+                              }}
+                            >
+                              <p
+                                className="empty-state-message"
+                                style={{
+                                  fontSize: '40px',
+                                  color: '#000000',
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}
+                              >
+                                No posts found. Please check back later.
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          <p>{error}</p>
+                        )}
+                      </div>
+                    ) : (
+                      <div>
+                        {posts.map((post, index) => (
+                          <BlogPost key={index} {...post} imageUrl={images[index]} />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                <Footer />
+              </div>
+            </React.Suspense>
+          );
+        }
+      }
+
+      Blog.propTypes = {
+        title: PropTypes.string,
       };
     </script>
   </body>
