@@ -2,6 +2,8 @@
 
 This project is a React-based blog that showcases articles related to Warframe, a popular free-to-play game. It demonstrates the use of React, PropTypes, and CSS styling to create an interactive blog. The blog features a dynamic loading state, handles empty states gracefully, and presents posts in a main state where users can engage with the content.
 
+[Link to the project at tiburoncin.lat](https://tiburoncin.lat/22716/warframe_blog_react/index.html)
+
 ## Features
 
 - **Responsive Design**: Adapts to various screen sizes, ensuring a seamless experience on both desktop and mobile devices.
